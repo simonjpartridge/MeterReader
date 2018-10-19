@@ -1,3 +1,4 @@
+import _strptime
 from peewee import *
 from flask import Flask, jsonify, request, send_from_directory, redirect
 import os
@@ -18,7 +19,8 @@ CORS(app)
 
 #watt hours per pip
 PIP_WH = 1
-
+KWH_CONSUMPTION_PRICE = 0.13
+KWH_GENERATION_PRICE = 0.52
 
 @app.before_request
 def _db_connect():
@@ -92,13 +94,24 @@ def get_pips_hourly():
 
     day_ago = now - datetime.timedelta(days=1)
 
-    pips_in_day = Pip.select().where(
-            Pip.created.between(day_ago, datetime.datetime.now()).group()
-        )
+    query = Pip.select(fn.COUNT(Pip.created).alias('count'), Pip.created).group_by(fn.date_trunc('hour', Pip.created))
 
-    wh = pips_in_day * PIP_WH
+    result = {}
+    for pip in query:
+        count = pip.count
+        pip_hour = pip.created.replace(minute=0, second=0, microsecond=0)
 
-    return jsonify({"energy" :wh})
+        result[str(pip_hour)] = count * PIP_WH
+    return jsonify(result)
+
+
+@app.route('/api/price/consumption')
+def get_consumption_price():
+    return jsonify({"price": KWH_CONSUMPTION_PRICE})
+
+@app.route('/api/price/generation')
+def get_generation_price():
+    return jsonify({"price": KWH_GENERATION_PRICE})
 
 
 
@@ -127,12 +140,10 @@ def get_instantaneous():
 
         power = 1 / hours  #power in watts
 
-
         time_since_last_pip = (datetime.datetime.now() - recent.created).total_seconds()
 
         if time_since_last_pip > 60:
             power = 0
-
 
         result = {"power": power, "seconds_since_update" : time_since_last_pip}
 
@@ -153,7 +164,7 @@ def pip():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host = '0.0.0.0',port=5005)
+    app.run(host = '0.0.0.0',port=80)
 
 
 

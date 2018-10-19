@@ -5,7 +5,7 @@ import axios from 'axios'
 Vue.config.productionTip = false
 
 
-// axios.defaults.baseURL = 'http://192.168.1.238:5005'
+// axios.defaults.baseURL = 'http://192.168.1.163:80'
 
 
 

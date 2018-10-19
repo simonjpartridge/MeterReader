@@ -2,7 +2,7 @@
   <div id="app">
     <h1>Current Usage {{display_instant}}</h1>
     <br>
-    <h2>Today: {{display_today}}</h2>
+    <h2>Today: {{display_today}} / £{{display_today_cost}} </h2>
     <br>
 
     <button v-on:click="pip()">Pip</button> 
@@ -14,6 +14,7 @@ import Utils from './Utils'
 
 import InstantaneousAPI from './services/api/Instantaneous'
 import HistoricalAPI from './services/api/Historical'
+import PriceAPI from './services/api/Price'
 
 import PipAPI from './services/api/Pip'
 
@@ -28,10 +29,12 @@ export default {
       powers : null,
       loading: true,
       energy_today: 0,
+      consumption_price: 0
     }
   },
   created() {
     this.update_instant()
+    this.get_consumption_prices()
 
     setInterval(() => {
         this.update_instant()
@@ -62,6 +65,12 @@ export default {
     },
     pip(){
       PipAPI.pip()
+    },
+    get_consumption_prices(){
+      PriceAPI.consumptionPrice()
+        .then(data =>{
+          this.consumption_price = data.price
+        })
     }
   },
   computed: {
@@ -72,6 +81,9 @@ export default {
     display_today(){
       if (this.energy_today != null) return Utils.convertWh(this.energy_today)
       return ""
+    },
+    display_today_cost(){
+      if (this.energy_today != null) return (this.energy_today/1000 * this.consumption_price).toFixed(2)
     }
   }
 }
