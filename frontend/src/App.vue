@@ -1,10 +1,9 @@
 <template>
   <div id="app">
-    Current Usage {{display_instant}}
+    <h1>Current Usage {{display_instant}}</h1>
     <br>
-    Today: {{display_today}}
+    <h2>Today: {{display_today}}</h2>
     <br>
-    {{test}}
 
     <button v-on:click="pip()">Pip</button> 
   </div>
@@ -29,7 +28,6 @@ export default {
       powers : null,
       loading: true,
       energy_today: 0,
-      test: 4
     }
   },
   created() {

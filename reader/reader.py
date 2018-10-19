@@ -1,8 +1,10 @@
+from time import sleep
 import RPi.GPIO as GPIO
 import grequests
 
 
-baseurl = "localhost:5005"
+
+baseurl = "http://localhost:5005"
 
 PIP_UPL = "/api/pip"
 
@@ -13,6 +15,9 @@ GPIO.setup(17, GPIO.OUT)
 
 
 
+def exception_handler(request, exception):
+    print "Request failed"
+    print(exception)
 
 
 def pip(channel):
@@ -28,9 +33,11 @@ def pip(channel):
 
 
 
+
+
 GPIO.add_event_detect(4, GPIO.BOTH, callback=pip)
+
+print("Reader ready to start")
 
 while True:
     sleep(9999999)
-
-
