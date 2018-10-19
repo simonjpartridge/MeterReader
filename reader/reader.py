@@ -4,7 +4,7 @@ import grequests
 
 
 
-baseurl = "http://localhost:5005"
+baseurl = "http://localhost:80"
 
 PIP_UPL = "/api/pip"
 
