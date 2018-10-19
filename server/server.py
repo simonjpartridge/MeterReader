@@ -1,12 +1,15 @@
 from peewee import *
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, redirect
+import os
 
 from flask_cors import CORS
 
 
 import datetime
 
-pips_db = SqliteDatabase('pips.db')
+pips_db = SqliteDatabase(os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        'pips.db'))
 app = Flask(__name__, static_url_path='/static', 
             static_folder='../frontend/dist/')
 
@@ -42,7 +45,7 @@ pips_db.create_tables([Pip])
 
 @app.route("/")
 def hello():
-    return app.send_static_file('../frontend/dist/index.html')
+    return redirect("/static/index.html", code=302)
 
 @app.route("/css/<path:path>")
 def css(path):
@@ -83,6 +86,20 @@ def get_pips_last_24():
 
     return jsonify({"energy" :wh})
 
+@app.route("/api/historical/hourly")
+def get_pips_hourly():
+    now = datetime.datetime.now()
+
+    day_ago = now - datetime.timedelta(days=1)
+
+    pips_in_day = Pip.select().where(
+            Pip.created.between(day_ago, datetime.datetime.now()).group()
+        )
+
+    wh = pips_in_day * PIP_WH
+
+    return jsonify({"energy" :wh})
+
 
 
 @app.route("/api/get_all_pips")
@@ -98,9 +115,6 @@ def get_all_pips():
 def get_instantaneous():
     most_recent_2 = Pip.select().order_by(Pip.created.desc()).limit(2)
 
-
-    print(most_recent_2)
-
     # most_recent_2 = Pip.select()
 
     if len(most_recent_2) > 1:
@@ -114,7 +128,13 @@ def get_instantaneous():
         power = 1 / hours  #power in watts
 
 
-        result = {"power": power, "last_update" : recent.created}
+        time_since_last_pip = (datetime.datetime.now() - recent.created).total_seconds()
+
+        if time_since_last_pip > 60:
+            power = 0
+
+
+        result = {"power": power, "seconds_since_update" : time_since_last_pip}
 
         return jsonify(result)
 
