@@ -35,12 +35,12 @@ export default {
 
     setInterval(() => {
         this.update_instant()
-      }, 10000);
+      }, 1000);
 
 
     setInterval(() => {
         this.update_today()
-      }, 100000);
+      }, 10000);
 
 
 
