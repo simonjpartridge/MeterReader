@@ -23,7 +23,8 @@ def exception_handler(request, exception):
 def pip(channel):
     if GPIO.input(4):     # if port 25 == 1  
         print "Rising edge detected on 25" 
-        grequests.get(baseurl + PIP_UPL)
+        grequests.map([grequests.get(baseurl + PIP_UPL)], exception_handler=exception_handler)
+
         GPIO.output(17,1) 
     else:                  # if port 25 != 1  
         # print "Falling edge detected on 25"  
