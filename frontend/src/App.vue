@@ -35,6 +35,7 @@ export default {
   created() {
     this.update_instant()
     this.get_consumption_prices()
+    this.update_today()
 
     setInterval(() => {
         this.update_instant()
@@ -45,10 +46,13 @@ export default {
         this.update_today()
       }, 10000);
 
+    setInterval(() => {
+      this.refresh()
+      }, 10000000);
 
 
 
-    this.update_today()
+
   },
   methods:{
     update_instant(){
@@ -62,6 +66,9 @@ export default {
         .then(today =>{
           this.energy_today = today.energy
         })
+    },
+    refresh(){
+      location.reload();
     },
     pip(){
       PipAPI.pip()

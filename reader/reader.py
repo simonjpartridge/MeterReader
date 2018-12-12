@@ -24,6 +24,7 @@ def pip(channel):
     if GPIO.input(4):     # if port 25 == 1  
         print "Rising edge detected on 25" 
         grequests.map([grequests.get(baseurl + PIP_UPL)], exception_handler=exception_handler)
+        print("request done")
 
         GPIO.output(17,1) 
     else:                  # if port 25 != 1  
@@ -39,6 +40,9 @@ def pip(channel):
 GPIO.add_event_detect(4, GPIO.BOTH, callback=pip)
 
 print("Reader ready to start")
-
-while True:
-    sleep(9999999)
+try:
+    while True:
+        sleep(9999999)
+finally:
+    GPIO.cleanup() # this ensures a clean exit
+    print("Exited cleanly")
