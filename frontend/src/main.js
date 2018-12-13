@@ -5,11 +5,14 @@ import axios from 'axios'
 Vue.config.productionTip = false
 
 
-// axios.defaults.baseURL = 'http://192.168.1.163:80'
+axios.defaults.baseURL = 'http://localhost:80'
 
 
+// Vue.use(Chart);
 
 
 new Vue({
   render: h => h(App)
 }).$mount('#app')
+
+Vue.config.devtools = true

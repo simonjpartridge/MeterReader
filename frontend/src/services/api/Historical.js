@@ -12,5 +12,11 @@ export default {
             .then(response => {
                 return response.data
             })
+    },
+    hourly(){
+        return axios.get('/api/historical/hourly')
+            .then(response => {
+                return response.data
+            })
     }
 }

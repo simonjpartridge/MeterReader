@@ -5,6 +5,8 @@
     <h2>Today: {{display_today}} / £{{display_today_cost}} </h2>
     <br>
 
+    <DailyGraph></DailyGraph>
+
     <button v-on:click="pip()">Pip</button> 
   </div>
 </template>
@@ -12,10 +14,11 @@
 <script>
 import Utils from './Utils'
 
+import DailyGraph from './components/DailyGraph'
+
 import InstantaneousAPI from './services/api/Instantaneous'
 import HistoricalAPI from './services/api/Historical'
 import PriceAPI from './services/api/Price'
-
 import PipAPI from './services/api/Pip'
 
 
@@ -23,6 +26,7 @@ import PipAPI from './services/api/Pip'
 export default {
   name: 'app',
   components: {
+    DailyGraph
   },
   data(){
     return{

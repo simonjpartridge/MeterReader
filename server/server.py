@@ -92,14 +92,14 @@ def get_pips_last_24():
 def get_pips_hourly():
     now = datetime.datetime.now()
 
-    day_ago = now - datetime.timedelta(days=1)
+    midnight = datetime.date.today()
 
-    query = Pip.select(fn.COUNT(Pip.created).alias('count'), Pip.created).group_by(fn.date_trunc('hour', Pip.created))
+    query = Pip.select(fn.COUNT(Pip.created).alias('count'), Pip.created).where(Pip.created.between(midnight, now)).group_by(fn.date_trunc('hour', Pip.created))
 
     result = {}
     for pip in query:
         count = pip.count
-        pip_hour = pip.created.replace(minute=0, second=0, microsecond=0)
+        pip_hour = pip.created.hour
 
         result[str(pip_hour)] = count * PIP_WH
     return jsonify(result)
