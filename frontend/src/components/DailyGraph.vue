@@ -24,6 +24,8 @@ export default {
   created(){
     this.update_chart()
 
+    setInterval(this.update_chart, 60000)
+
   },
   methods:{
     update_chart(){
@@ -35,16 +37,9 @@ export default {
   },
   computed:{
     chart_data(){
-      if (this.hourly == null) return {labels: [], values: []}
+      if (this.hourly == null) return {"labels": [], "values": []}
 
-      var self = this;
-
-      var labels = Object.keys(this.hourly);
-      var values = labels.map(function (k) {
-        return self.hourly[k];
-      });
-
-      return {"labels": labels, "values": values}
+      return {"labels": this.hourly.times, "values": this.hourly.values}
     }
   }
 }

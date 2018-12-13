@@ -23,7 +23,7 @@ set -x                         # tell sh to display commands before execution
 
 echo "starting git pull"
 
-su pi -c "git -C '/home/pi/Documents/MeterReader' pull" 
+su pi -c "git -C '/home/pi/Documents/MeterReader' pull"  || echo "git step"
 echo "done pull"
 
 

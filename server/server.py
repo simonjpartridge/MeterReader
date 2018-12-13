@@ -96,13 +96,27 @@ def get_pips_hourly():
 
     query = Pip.select(fn.COUNT(Pip.created).alias('count'), Pip.created).where(Pip.created.between(midnight, now)).group_by(fn.date_trunc('hour', Pip.created))
 
+    # print(query)
+
     result = {}
     for pip in query:
         count = pip.count
         pip_hour = pip.created.hour
 
         result[str(pip_hour)] = count * PIP_WH
-    return jsonify(result)
+
+    times = []
+    values = []
+
+
+    for i in range(0, now.hour+1):
+        times.append(str(i))
+        if str(i) not in result:
+            values.append(0)
+        else:
+            values.append(result[str(i)])
+
+    return jsonify({"times": times, "values": values})
 
 
 @app.route('/api/price/consumption')

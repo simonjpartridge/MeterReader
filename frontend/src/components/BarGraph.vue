@@ -8,13 +8,12 @@
 
 // import _ from 'lodash'
 
-import VueCharts from 'vue-chartjs'
-import { Bar, Line, mixins } from 'vue-chartjs'
+// import VueCharts from 'vue-chartjs'
+import { Bar } from 'vue-chartjs'
 
 
 export default {
   extends: Bar,
-  // mixins: [mixins.reactiveProp],
   props:['labels', 'values'],
   methods:{
     draw(){
@@ -22,6 +21,9 @@ export default {
           labels: this.labels,
           width: 100,
           height:200,
+          title:{
+            display:false,
+          },
           datasets: [
             {
               label: '',
@@ -29,7 +31,16 @@ export default {
               data: this.values
             }
           ]},
-          {responsive: true, maintainAspectRatio:false}
+          {
+            responsive: true, 
+            maintainAspectRatio:false,
+            legend:{
+                display:false,
+            },
+            animation:{
+                duration:0
+            }
+          }
         )
     }
   },
@@ -37,7 +48,7 @@ export default {
     this.draw()
   },
   watch:{
-    values: function (oldVal, newVal) {
+    values: function () {
         this.draw()
     }
   }
