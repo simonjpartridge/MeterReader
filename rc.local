@@ -27,7 +27,7 @@ su pi -c "git -C '/home/pi/Documents/MeterReader' pull"  || echo "git step"
 echo "done pull"
 
 cd /home/pi/Documents/MeterReader/
-su pi -c "sudo gunicorn -b 127.0.0.1:80 -w 1 server:app  &"
+su pi -c "sudo gunicorn -b 0.0.0.0:80 -w 3 server:app  &"
 echo "server started"
 su pi -c "sudo python /home/pi/Documents/MeterReader/reader/reader.py &"
 

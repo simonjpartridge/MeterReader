@@ -36,7 +36,7 @@ def _db_close(exc):
 
 
 class Pip(Model):
-    created = DateTimeField(default=datetime.datetime.now)
+    created = DateTimeField(default=datetime.datetime.now, index=True)
     class Meta:
         database = pips_db
 
