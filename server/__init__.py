@@ -42,6 +42,7 @@ class Pip(Model):
 
 
 pips_db.create_tables([Pip])
+pips_db.close()
 
 
 
@@ -51,7 +52,6 @@ def hello():
 
 @app.route("/css/<path:path>")
 def css(path):
-    print("lalala")
     return send_from_directory('../frontend/dist/css', path)
 
 @app.route("/js/<path:path>")
@@ -176,9 +176,9 @@ def pip():
     return jsonify({"success":"true"})   
 
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run(host = '0.0.0.0',port=80)
+# if __name__ == '__main__':
+#     app.debug = True
+#     app.run(host = '0.0.0.0',port=80)
 
 
 
