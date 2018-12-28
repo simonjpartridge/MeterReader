@@ -1,0 +1,4 @@
+#watt hours per pip
+PIP_WH = 1
+KWH_CONSUMPTION_PRICE = 0.13
+KWH_GENERATION_PRICE = 0.52

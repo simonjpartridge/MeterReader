@@ -43,12 +43,12 @@ export default {
 
     setInterval(() => {
         this.update_instant()
-      }, 1000);
+      }, 2000);
 
 
     setInterval(() => {
         this.update_today()
-      }, 10000);
+      }, 20000);
 
     setInterval(() => {
       this.refresh()
