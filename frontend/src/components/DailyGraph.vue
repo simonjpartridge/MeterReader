@@ -1,7 +1,10 @@
 <template>
   <div id="dailyGraphContainer">
     <Graph  id="dailyGraph" :labels=chart_data.labels :values=chart_data.values ></Graph>
-    <div v-on:click="toggleView">Toggle</div>
+    <div>
+      <input type="radio" id="hourly" value="hourly" v-model="toShow"><label for="hourly">Hourly</label>
+      <input type="radio" id="daily" value="daily" v-model="toShow"><label for="daily">Daily</label>
+    </div>
   </div>
 </template>
 
@@ -19,7 +22,7 @@ export default {
     return {
       hourly : null,
       daily: null,
-      toShow: "hourly"
+      toShow: "hourly",
     }
   },
   created(){

@@ -8,7 +8,7 @@ TEST_DB = ':memory'
 os.environ["METER_DATABASE_PATH"] = TEST_DB
 
 from server import app, db, constants
-from server.models import Pip, Minute, Hour
+from server.models import Pip, Minute, Hour, Day
 
 class BasicTests(unittest.TestCase):
 
@@ -34,8 +34,8 @@ class BasicTests(unittest.TestCase):
         pass
 
     def reset_db(self):
-        db.drop_tables([Pip, Minute, Hour])
-        db.create_tables([Pip, Minute, Hour])
+        db.drop_tables([Pip, Minute, Hour, Day])
+        db.create_tables([Pip, Minute, Hour, Day])
         db.close()
 
     def get_json(self, url):
