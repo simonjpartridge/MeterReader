@@ -2,6 +2,7 @@ import datetime
 import time
 import os
 import _strptime
+import random
 
 from flask import Flask, jsonify, request, send_from_directory, redirect
 from flask_cors import CORS
@@ -25,6 +26,12 @@ def _db_close(exc):
     if not db.is_closed():
         db.close()
 
+def datetime_range(start, end, delta):
+    current = start
+    while current <= end:
+        yield current
+        current += delta
+
 
 @app.route("/")
 def hello():
@@ -40,7 +47,7 @@ def js(path):
     return send_from_directory('../frontend/dist/js', path)
 
 
-@app.route("/api/historical/today")
+@app.route("/api/total/today")
 def get_pips_today():
     now = datetime.datetime.now()
     midnight = datetime.date.today()
@@ -55,7 +62,7 @@ def get_pips_today():
     return jsonify({"energy": wh})
 
 
-@app.route("/api/historical/last24")
+@app.route("/api/total/last24")
 def get_pips_last_24():
     now = datetime.datetime.now()
 
@@ -71,32 +78,85 @@ def get_pips_last_24():
 
 
 @app.route("/api/historical/hourly/today")
-def get_pips_hourly():
+def get_pips_hourly_today():
     now = datetime.datetime.now()
+    midnight = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    midnight = datetime.date.today()
+    return get_pips_hourly_between_times(midnight, now)
+
+    
+@app.route('/api/historical/hourly')
+def get_pips_hourly_request():
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    start_time = datetime.datetime.strptime(start, '%Y-%m-%d:%H')
+    end_time = datetime.datetime.strptime(end, '%Y-%m-%d:%H')
+
+    return get_pips_hourly_between_times(start_time, end_time)
+
+
+def get_pips_hourly_between_times(start, end):
 
     query = Hour.select().where(
-        Hour.time.between(midnight, now)
+        Hour.time.between(start, end)
     )
 
     result = {}
     for item in query:
         pips = item.pips
 
-        hour = item.time.hour
+        hour = item.time
 
         result[str(hour)] = pips * PIP_WH
-    
+
     times = []
     values = []
 
-    for i in range(0, now.hour+1):
+    for i in datetime_range(start, end, datetime.timedelta(hours=1)):
         times.append(str(i))
         if str(i) not in result:
             values.append(0)
         else:
             values.append(result[str(i)])
+
+    # print(values)
+
+    return jsonify({"times": times, "values": values})
+
+
+@app.route('/api/historical/daily/last30')
+def daily_last_30():
+    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    thirty_days_ago = today - datetime.timedelta(days=30)
+
+    return get_pips_daily_between_times(thirty_days_ago, today)
+
+def get_pips_daily_between_times(start, end):
+
+    query = Day.select().where(
+        Day.time.between(start, end)
+    )
+
+    result = {}
+    for item in query:
+        pips = item.pips
+
+        day = item.time
+
+        result[str(day)] = pips * PIP_WH
+
+    times = []
+    values = []
+
+    for i in datetime_range(start, end, datetime.timedelta(days=1)):
+        times.append(str(i))
+        if str(i) not in result:
+            values.append(0)
+        else:
+            values.append(result[str(i)])
+
+    # print(values)
 
     return jsonify({"times": times, "values": values})
 
@@ -231,9 +291,18 @@ def add_pip_day(pip_time):
 
 
 
+@app.route("/debug/addlots/<int:number>")
+def debug_add_lots(number=10000):
+    
+    deltas = [random.uniform(1, 60*60*24*30) for _ in xrange(0,number)]
 
+    with db.atomic():
+        for index, delta in enumerate(deltas):
+            pip(time.time() - delta)
+            if index % 1000 == 0:
+                print("Done " + str(index))
 
-
+    return jsonify("success")
 
 
 

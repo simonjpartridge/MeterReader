@@ -1,12 +1,11 @@
 <template>
   <div id="dailyGraphContainer">
     <Graph  id="dailyGraph" :labels=chart_data.labels :values=chart_data.values ></Graph>
+    <div v-on:click="toggleView">Toggle</div>
   </div>
 </template>
 
 <script>
-
-// import _ from 'lodash'
 
 import Graph from './BarGraph'
 import HistoricalAPI from '../services/api/Historical'
@@ -19,8 +18,8 @@ export default {
   data(){
     return {
       hourly : null,
-      // labels: ['1','2','3','4','5','6','7','8','9'],
-      // values: [22,44,33,22,22,33,44,22,33]
+      daily: null,
+      toShow: "hourly"
     }
   },
   created(){
@@ -35,13 +34,36 @@ export default {
         .then(hourly =>{
           this.hourly = hourly 
         })
+      
+      HistoricalAPI.daily()
+        .then(daily =>{
+          this.daily = daily 
+        })
+    },
+    toggleView(){
+      if (this.toShow =="daily"){
+        this.toShow="hourly"
+      }else{
+        this.toShow="daily"
+      }
+
     }
   },
   computed:{
     chart_data(){
-      if (this.hourly == null) return {"labels": [], "values": []}
+      if (this.toShow == "hourly"){
+        if (this.hourly == null) return {"labels": [], "values": []}
+  
+        var hours = this.hourly.times.map(hour => hour.split(" ")[1].split(":")[0]) //parse to get just hour entry
+  
+        return {"labels": hours, "values": this.hourly.values}
+      }else if(this.toShow == "daily"){
+        if (this.daily == null) return {"labels": [], "values": []}
 
-      return {"labels": this.hourly.times, "values": this.hourly.values}
+        var days = this.daily.times.map(day => day.split(" ")[0].split("-")[2]) //parse to get just hour entry
+
+        return {"labels": days, "values": this.daily.values}
+      }
     }
   }
 }
