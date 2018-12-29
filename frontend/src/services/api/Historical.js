@@ -14,7 +14,7 @@ export default {
             })
     },
     hourly(){
-        return axios.get('/api/historical/hourly')
+        return axios.get('/api/historical/hourly/today')
             .then(response => {
                 return response.data
             })

@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <h1>Current Usage {{display_instant}}</h1>
-    <br>
-    <h2>Today: {{display_today}} / £{{display_today_cost}} </h2>
-    <br>
-
+    <div class="instant">Current {{display_instant}}</div>
+    <div class="today">Today: {{display_today}} / £{{display_today_cost}} </div>
     <DailyGraph></DailyGraph>
 
     <button v-on:click="pip()">Pip</button> 
@@ -52,7 +49,7 @@ export default {
 
     setInterval(() => {
       this.refresh()
-      }, 10000000);
+      }, 1000000);
 
 
 
@@ -87,11 +84,11 @@ export default {
   computed: {
     display_instant(){
       if (this.powers != null) return Utils.convertWatts(this.powers["power"])
-      return ""
+      return "0"
     },
     display_today(){
       if (this.energy_today != null) return Utils.convertWh(this.energy_today)
-      return ""
+      return "0"
     },
     display_today_cost(){
       if (this.energy_today != null) return (this.energy_today/1000 * this.consumption_price).toFixed(2)
@@ -107,6 +104,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0px;
+}
+
+.instant{
+  font-size:1.4em
+}
+
+.today{
+  font-size:1.2em
 }
 </style>

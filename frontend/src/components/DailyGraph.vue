@@ -1,5 +1,7 @@
 <template>
+  <div id="dailyGraphContainer">
     <Graph  id="dailyGraph" :labels=chart_data.labels :values=chart_data.values ></Graph>
+  </div>
 </template>
 
 <script>
@@ -51,6 +53,13 @@ export default {
 #dailyGraph{
   width:100%;
   height:200px;
+  max-width:500px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#dailyGraphContainer{
+  text-align:center
 }
 
 canvas{
