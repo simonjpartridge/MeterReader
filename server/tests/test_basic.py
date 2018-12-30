@@ -4,9 +4,6 @@ import time
 import json
 from datetime import datetime, timedelta
 
-TEST_DB = ':memory'
-os.environ["METER_DATABASE_PATH"] = TEST_DB
-
 from server import app, db, constants
 from server.models import Pip, Minute, Hour, Day
 
